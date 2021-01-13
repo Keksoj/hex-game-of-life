@@ -32,9 +32,10 @@ export default class Geometry {
         this.gapBetweenCells = gapBetweenCells;
         this.verticalGap = this.gapBetweenCells * Math.cos(this.angle);
 
-        this.widthInCells = windowWidth / (bigDiameter + this.gapBetweenCells) + 2;
-        this.heightInCells = windowHeight / (bigDiameter + this.gapBetweenCells) + 3;
+        this.widthInCells = Math.floor(windowWidth / (bigDiameter + this.gapBetweenCells) + 2);
+        this.heightInCells = Math.floor(windowHeight / (bigDiameter + this.gapBetweenCells))+5;
 
+        this.totalNumberOfCells = this.widthInCells * this.heightInCells;
         // convert the x and y positions into drawable coordinates
         this.xMultiplier = this.smallDiameter + gapBetweenCells;
         this.yMultiplier = this.bigDiameter * 0.75 + this.verticalGap;

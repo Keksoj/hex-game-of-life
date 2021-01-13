@@ -10,88 +10,71 @@ import Cell from './Cell.js';
  * @property {[Cell]} cells
  */
 export default class Board {
-    constructor(geometry, ticktime) {
+    constructor(geometry, ticktime, ctx) {
+        this.ctx = ctx;
         this.geometry = geometry;
         // console.log(geometry);
         this.cells = [];
 
-        // var aloneCell = new Cell(2, 2, true, 'beige', this.geometry);
-        // this.cells.push(aloneCell);
-
-        for (var y = 0; y < geometry.heightInCells; y++) {
-            // offset odd rows
-            var isOffset = !(y % 2 === 0);
-
-            var row = [];
-            for (var x = 0; x < geometry.widthInCells; x++) {
-                // pseudo-randomize live cells
-                var bringToLife = Math.random() > 0.5;
-                row.push(new Cell(x, y, isOffset, bringToLife, 'grey', geometry));
-            }
-            this.cells.push(row);
+        for (var i = 0; i < geometry.totalNumberOfCells; i++) {
+            
+            var bringToLife = Math.random() > 0.3;
+            this.cells.push(new Cell(i, bringToLife, geometry));
         }
+        // console.log(this.cells);
+
+        this.draw();
         this.ticktime = ticktime;
         this.ticker = window.setInterval(() => this.tick(), this.ticktime);
     }
 
     tick() {
         this.updateTheCells();
+        this.draw();
     }
 
     updateTheCells() {
-        for (var y = 0; y < this.geometry.heightInCells; y++) {
-            for (var x = 0; x < this.geometry.widthInCells; x++) {
-                this.updateOneCell(y, x);
-            }
+        for (var index = 0; index < this.geometry.totalNumberOfCells; index++) {
+            this.updateOneCell(index);
         }
     }
 
-    updateOneCell(y, x) {
-        var liveNeigbors = 0;
-        if (x === 0 || y === 0 || x === this.widthInCells-1 || y === this.heightInCells-1) {
+    updateOneCell(index) {
+        var liveNeighbors = 0;
+
+        var listOfNeighbors = this.cells[index].neighbors;
+        // console.log(listOfNeighbors);
+        for (var i = 0; i < 6; i++) {
+            var indexOfTheNeighbor = listOfNeighbors[i];
+            // console.log(this.cells[indexOfTheNeighbor]);
+            if (this.cells[indexOfTheNeighbor].isAlive) {
+                liveNeighbors++;
+                // console.log(liveNeighbors)
+            }
+        }
+
+        if (liveNeighbors <= 2) {
+            this.cells[index].isAlive = false;
+        }
+        if ((liveNeighbors = 3)) {
             return;
         }
-        if (this.cells[y - 1][x - 1].isAlive) {
-            liveNeigbors++;
+        if (liveNeighbors >= 4) {
+            this.cells[index].isAlive = true;
         }
-        if (this.cells[y - 1][x - 1].isAlive) {
-            liveNeigbors++;
-        }
-        if (this.cells[y - 1][x].isAlive) {
-            liveNeigbors++;
-        }
-        if (this.cells[y][x + 1].isAlive) {
-            liveNeigbors++;
-        }
-        if (this.cells[y + 1][x - 1].isAlive) {
-            liveNeigbors++;
-        }
-        if (this.cells[y + 1][x].isAlive) {
-            liveNeigbors++;
-        }
-        if (liveNeigbors <= 3) {
-            this.cells[y][x].isAlive = false;
-        }
-        if ((liveNeigbors = 4)) {
-            return;
-        }
-        if (liveNeigbors >= 5) {
-            this.cells[y][x].isAlive = true;
-        }
+        
     }
 
     /** draw the game
      * @param {CanvasRenderingContext2D} ctx
      * @param {Geometry} geometry
      */
-    draw(ctx) {
-        ctx.save();
-        for (var y = 0; y < this.geometry.heightInCells; y++) {
-            for (var x = 0; x < this.geometry.widthInCells; x++) {
-                this.cells[y][x].draw(ctx, this.geometry);
-                // console.log(this.cells[i]);
-            }
+    draw() {
+        this.ctx.save();
+        for (var index = 0; index < this.geometry.totalNumberOfCells; index++) {
+            this.cells[index].draw(this.ctx, this.geometry);
+            // console.log(this.cells[i]);
         }
-        ctx.restore;
+        this.ctx.restore;
     }
 }

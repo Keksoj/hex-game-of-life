@@ -6,21 +6,76 @@ import Geometry from './Geometry.js';
  * @param {Number} y the Y coordinate in the grid
  * @param {Boolean} isOffset
  * @param {Boolean} isAlive
- * @param {String} color
  * @param {Geometry} geometry
  */
 export default class Cell {
-    constructor(x, y, isOffset, isAlive, color, geometry) {
-        this.color = color;
-        this.isOffset = isOffset;
-        this.geometry = geometry;
-        // console.log(this.geometry);
-        this.x = x;
-        this.drawX = this.getDrawX(this.geometry, isOffset);
-
-        this.y = y;
-        this.drawY = this.getDrawY(this.geometry);
+    constructor(index, isAlive, geometry) {
+        this.index = index;
         this.isAlive = isAlive;
+
+        this.neighbors = this.getNeighbors(geometry);
+        // console.log(this.neighbors);
+
+        // console.log(this.geometry);
+        this.x = this.getX(geometry);
+        this.y = this.getY(geometry);
+
+        if (this.y % 2 === 0) {
+            this.isOffset = false;
+        } else {
+            this.isOffset = true;
+        }
+
+        this.drawX = this.getDrawX(geometry);
+        this.drawY = this.getDrawY(geometry);
+    }
+
+    getNeighbors(geometry) {
+        var width = geometry.widthInCells;
+        var arrayLength = geometry.totalNumberOfCells;
+        if (!this.isOffset) {
+            return [
+                this.circleSubstract(this.index, width + 1, arrayLength),
+                this.circleSubstract(this.index, width, arrayLength),
+                this.circleSubstract(this.index, 1, arrayLength),
+                this.circleAdd(this.index, 1, arrayLength),
+                this.circleAdd(this.index, width - 1, arrayLength),
+                this.circleAdd(this.index, width, arrayLength),
+            ];
+        } else {
+            return [
+                this.circleSubstract(this.index, width, arrayLength),
+                this.circleSubstract(this.index, width + 1, arrayLength),
+                this.circleSubstract(this.index, 1, arrayLength),
+                this.circleAdd(this.index, 1, arrayLength),
+                this.circleAdd(this.index, width, arrayLength),
+                this.circleAdd(this.index, width + 1, arrayLength),
+            ];
+        }
+    }
+
+    circleSubstract(firstTerm, secondTerm, arrayLength) {
+        if (firstTerm - secondTerm < 0) {
+            return arrayLength + firstTerm - secondTerm;
+        } else {
+            return firstTerm - secondTerm;
+        }
+    }
+
+    circleAdd(firstTerm, secondTerm, arrayLength) {
+        if (firstTerm + secondTerm > arrayLength - 1) {
+            return firstTerm + secondTerm - arrayLength;
+        } else {
+            return firstTerm + secondTerm;
+        }
+    }
+
+    getX(geometry) {
+        return this.index % geometry.widthInCells;
+    }
+
+    getY(geometry) {
+        return Math.floor(this.index / geometry.widthInCells);
     }
 
     /**
@@ -29,9 +84,9 @@ export default class Cell {
      * @param {Boolean} isOffset
      * @returns {Number} drawX
      */
-    getDrawX(geometry, isOffset) {
+    getDrawX(geometry) {
         // console.log(geometry);
-        if (isOffset) {
+        if (this.isOffset) {
             return this.x * geometry.xMultiplier + geometry.offset;
         }
         return this.x * geometry.xMultiplier;
@@ -57,7 +112,7 @@ export default class Cell {
         if (this.isAlive) {
             ctx.fillStyle = 'pink';
         } else {
-            ctx.fillStyle = this.color;
+            ctx.fillStyle = 'grey';
         }
 
         ctx.beginPath();
