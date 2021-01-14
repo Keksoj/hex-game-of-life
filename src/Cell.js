@@ -9,65 +9,43 @@ import Geometry from './Geometry.js';
  * @param {Geometry} geometry
  */
 export default class Cell {
-    constructor(index, isAlive, geometry) {
+    constructor(index, isOffset, neighbors, isAlive, geometry) {
         this.index = index;
         this.isAlive = isAlive;
 
-        this.neighbors = this.getNeighbors(geometry);
         // console.log(this.neighbors);
 
         // console.log(this.geometry);
         this.x = this.getX(geometry);
         this.y = this.getY(geometry);
 
-        if (this.y % 2 === 0) {
-            this.isOffset = false;
-        } else {
-            this.isOffset = true;
-        }
+        this.isOffset = isOffset;
 
-        this.drawX = this.getDrawX(geometry);
-        this.drawY = this.getDrawY(geometry);
+        this.neighbors = neighbors;
+        this.liveNeighbors = 0;
+
+        this.drawX = geometry.getDrawX(this.x, this.isOffset);
+        this.drawY = geometry.getDrawY(this.y);
     }
 
-    getNeighbors(geometry) {
-        var width = geometry.widthInCells;
-        var arrayLength = geometry.totalNumberOfCells;
-        if (!this.isOffset) {
-            return [
-                this.circleSubstract(this.index, width + 1, arrayLength),
-                this.circleSubstract(this.index, width, arrayLength),
-                this.circleSubstract(this.index, 1, arrayLength),
-                this.circleAdd(this.index, 1, arrayLength),
-                this.circleAdd(this.index, width - 1, arrayLength),
-                this.circleAdd(this.index, width, arrayLength),
-            ];
-        } else {
-            return [
-                this.circleSubstract(this.index, width, arrayLength),
-                this.circleSubstract(this.index, width + 1, arrayLength),
-                this.circleSubstract(this.index, 1, arrayLength),
-                this.circleAdd(this.index, 1, arrayLength),
-                this.circleAdd(this.index, width, arrayLength),
-                this.circleAdd(this.index, width + 1, arrayLength),
-            ];
+    updateLiveState(rules) {
+        var rule = rules[this.liveNeighbors];
+        if (rule.death) {
+            this.isAlive = false;
+        }
+        if (rule.birth) {
+            this.isAlive = true;
         }
     }
 
-    circleSubstract(firstTerm, secondTerm, arrayLength) {
-        if (firstTerm - secondTerm < 0) {
-            return arrayLength + firstTerm - secondTerm;
-        } else {
-            return firstTerm - secondTerm;
-        }
-    }
-
-    circleAdd(firstTerm, secondTerm, arrayLength) {
-        if (firstTerm + secondTerm > arrayLength - 1) {
-            return firstTerm + secondTerm - arrayLength;
-        } else {
-            return firstTerm + secondTerm;
-        }
+    report() {
+        console.log(
+            'I am cell with index',
+            this.index,
+            'I have',
+            this.liveNeighbors,
+            'alive neighbors'
+        );
     }
 
     getX(geometry) {
@@ -78,30 +56,6 @@ export default class Cell {
         return Math.floor(this.index / geometry.widthInCells);
     }
 
-    /**
-     * convert the x grid position into a drawable coordinate
-     * @param {Geometry} geometry
-     * @param {Boolean} isOffset
-     * @returns {Number} drawX
-     */
-    getDrawX(geometry) {
-        // console.log(geometry);
-        if (this.isOffset) {
-            return this.x * geometry.xMultiplier + geometry.offset;
-        }
-        return this.x * geometry.xMultiplier;
-    }
-
-    /**
-     * convert the y grid position into a drawable coordinate
-     * @param {Geometry} geometry
-     * @returns {Number} drawY
-     */
-    getDrawY(geometry) {
-        return this.y * geometry.yMultiplier;
-        // console.log(drawY);
-    }
-
     /** draw the cell on the canvas
      * @param {CanvasRenderingContext2D} ctx
      * @param {Geometry} geometry
@@ -110,7 +64,7 @@ export default class Cell {
         ctx.save();
 
         if (this.isAlive) {
-            ctx.fillStyle = 'pink';
+            ctx.fillStyle = 'beige';
         } else {
             ctx.fillStyle = 'grey';
         }

@@ -16,12 +16,35 @@ export default class Board {
         // console.log(geometry);
         this.cells = [];
 
-        for (var i = 0; i < geometry.totalNumberOfCells; i++) {
-            
-            var bringToLife = Math.random() > 0.3;
-            this.cells.push(new Cell(i, bringToLife, geometry));
+        var index = 0;
+        for (var y = 0; y < geometry.heightInCells; y++) {
+            var isOffset = y % 2 !== 0;
+            for (var x = 0; x < geometry.widthInCells; x++) {
+                var neighbors = this.geometry.getNeighbors(y, x, isOffset);
+                var isAlive = Math.random() > 0.05;
+                this.cells.push(new Cell(index, isOffset, neighbors, isAlive, geometry));
+                index++;
+            }
         }
+
+        this.rules = [
+            { death: true, birth: false }, // zero live neighbor
+            { death: true, birth: false }, // one live neighbor
+            { death: true, birth: true }, // two live neighbors
+            { death: false, birth: false }, // three live neighbors
+            { death: true, birth: false }, // four live neighbors
+            { death: true, birth: false }, // five live neighbors
+            { death: true, birth: false }, // six live neighbors
+        ];
+        // for (var i = 0; i < geometry.totalNumberOfCells; i++) {
+        //     var bringToLife = Math.random() > 0.3;
+        //     this.cells.push(new Cell(i, bringToLife, geometry));
+        // }
         // console.log(this.cells);
+
+        // this.draw();
+        // this.countLiveNeighbors();
+        // this.updateLiveState();
 
         this.draw();
         this.ticktime = ticktime;
@@ -29,40 +52,28 @@ export default class Board {
     }
 
     tick() {
-        this.updateTheCells();
+        this.countLiveNeighbors();
+        this.updateLiveState();
         this.draw();
     }
 
-    updateTheCells() {
+    countLiveNeighbors() {
         for (var index = 0; index < this.geometry.totalNumberOfCells; index++) {
-            this.updateOneCell(index);
+            var liveNeighbors = 0;
+            for (var i = 0; i < 6; i++) {
+                if (this.cells[this.cells[index].neighbors[i]].isAlive) {
+                    liveNeighbors++;
+                }
+            }
+            this.cells[index].liveNeighbors = liveNeighbors;
+            // this.cells[index].report();
         }
     }
 
-    updateOneCell(index) {
-        var liveNeighbors = 0;
-
-        var listOfNeighbors = this.cells[index].neighbors;
-        // console.log(listOfNeighbors);
-        for (var i = 0; i < 6; i++) {
-            var indexOfTheNeighbor = listOfNeighbors[i];
-            // console.log(this.cells[indexOfTheNeighbor]);
-            if (this.cells[indexOfTheNeighbor].isAlive) {
-                liveNeighbors++;
-                // console.log(liveNeighbors)
-            }
+    updateLiveState() {
+        for (var index = 0; index < this.geometry.totalNumberOfCells; index++) {
+            this.cells[index].updateLiveState(this.rules);
         }
-
-        if (liveNeighbors <= 2) {
-            this.cells[index].isAlive = false;
-        }
-        if ((liveNeighbors = 3)) {
-            return;
-        }
-        if (liveNeighbors >= 4) {
-            this.cells[index].isAlive = true;
-        }
-        
     }
 
     /** draw the game
