@@ -21,7 +21,7 @@ export default class Board {
             var isOffset = y % 2 !== 0;
             for (var x = 0; x < geometry.widthInCells; x++) {
                 var neighbors = this.geometry.getNeighbors(y, x, isOffset);
-                var isAlive = Math.random() > 0.05;
+                var isAlive = Math.random() > 800 / geometry.totalNumberOfCells;
                 this.cells.push(new Cell(index, isOffset, neighbors, isAlive, geometry));
                 index++;
             }
