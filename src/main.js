@@ -16,6 +16,20 @@ canvas.width = geometry.canvasWidth;
 canvas.height = geometry.canvasHeight;
 var ctx = canvas.getContext('2d');
 
-var board = new Board(geometry, 100, ctx);
+var pauseButton = document.getElementById('pause');
+pauseButton.isToggled = false;
+
+var board = new Board(geometry, 300, ctx);
 // console.log(board);
 // board.draw(ctx, geometry);
+board.play();
+
+pauseButton.onclick = () => {
+    pauseButton.isToggled = !pauseButton.isToggled;
+    console.log('pause/play toggled');
+    if (pauseButton.isToggled) {
+        board.pause();
+    } else {
+        board.play();
+    }
+};

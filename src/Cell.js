@@ -1,4 +1,5 @@
 import Geometry from './Geometry.js';
+import Rule from './Rule.js';
 
 /**
  * The building component of the game
@@ -29,11 +30,26 @@ export default class Cell {
     }
 
     updateLiveState(rules) {
-        var rule = rules[this.liveNeighbors];
-        if (rule.death) {
+        for (var i = 0; i < rules.length; i++) {
+            if (rules[i].liveNeighbors === this.liveNeighbors) {
+                if (rules[i].death) {
+                    this.kill();
+                }
+                if (rules[i].birth) {
+                    this.spawn();
+                }
+            }
+        }
+        // var rule = rules[this.liveNeighbors];
+    }
+
+    kill() {
+        if (this.isAlive) {
             this.isAlive = false;
         }
-        if (rule.birth) {
+    }
+    spawn() {
+        if (!this.isAlive) {
             this.isAlive = true;
         }
     }

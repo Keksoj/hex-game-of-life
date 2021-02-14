@@ -1,4 +1,5 @@
 import Geometry from './Geometry.js';
+import Rule from './Rule.js';
 import Cell from './Cell.js';
 
 /**
@@ -28,13 +29,13 @@ export default class Board {
         }
 
         this.rules = [
-            { death: true, birth: false }, // zero live neighbor
-            { death: true, birth: false }, // one live neighbor
-            { death: true, birth: true }, // two live neighbors
-            { death: false, birth: false }, // three live neighbors
-            { death: true, birth: false }, // four live neighbors
-            { death: true, birth: false }, // five live neighbors
-            { death: true, birth: false }, // six live neighbors
+            new Rule(0, true, false), // zero live neighbor
+            new Rule(1, false, false), // one live neighbor
+            new Rule(2, false, true), // two live neighbors
+            new Rule(3, false, false), // three live neighbors
+            new Rule(4, false, false), // four live neighbors
+            new Rule(5, true, true), // five live neighbors
+            new Rule(6, true, false), // six live neighbors
         ];
         // for (var i = 0; i < geometry.totalNumberOfCells; i++) {
         //     var bringToLife = Math.random() > 0.3;
@@ -48,13 +49,21 @@ export default class Board {
 
         this.draw();
         this.ticktime = ticktime;
-        this.ticker = window.setInterval(() => this.tick(), this.ticktime);
+        this.ticker;
+        // this.ticker = window.setInterval(() => this.tick(), this.ticktime);
     }
 
     tick() {
         this.countLiveNeighbors();
         this.updateLiveState();
         this.draw();
+    }
+
+    play() {
+        this.ticker = window.setInterval(() => this.tick(), this.ticktime);
+    }
+    pause() {
+        clearInterval(this.ticker);
     }
 
     countLiveNeighbors() {

@@ -17,16 +17,13 @@
             sizes="16x16"
             href="favicon-16x16.png"
         />
-        <link rel="manifest" href="/site.webmanifest">
+        <link rel="manifest" href="/site.webmanifest" />
         <meta property="og:title" content="" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="" />
         <meta property="og:image" content="" />
         <meta property="og:image:secure_url" content="" />
-        <meta
-            property="og:description"
-            content="Game of Life with Hexagons"
-        />
+        <meta property="og:description" content="Game of Life with Hexagons" />
         <title>Hex Game of Life</title>
         <style type="text/css">
             a {
@@ -52,6 +49,10 @@
     <body>
         <!-- <a href="https://emmanuelbosquet.com">Retour au CV</a> -->
         <canvas id="canvas"></canvas>
+        <div id="controls">
+            <input type="button" id="pause" value="start/stop" />
+            <form></form>
+        </div>
         <script type="module" src="src/main.js"></script>
     </body>
 </html>
