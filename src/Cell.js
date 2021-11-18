@@ -29,7 +29,7 @@ export default class Cell {
     }
 
     updateLiveState(rules) {
-        var rule = rules[this.liveNeighbors];
+        var rule = rules.getRuleForLiveNeighbors(this.liveNeighbors);
         if (rule.death) {
             this.isAlive = false;
         }

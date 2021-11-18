@@ -1,5 +1,6 @@
 import Geometry from './Geometry.js';
 import Cell from './Cell.js';
+import Rules from './Rules.js';
 
 /**
  * The place where things happen
@@ -27,15 +28,7 @@ export default class Board {
             }
         }
 
-        this.rules = [
-            { death: true, birth: false }, // zero live neighbor
-            { death: true, birth: false }, // one live neighbor
-            { death: true, birth: true }, // two live neighbors
-            { death: false, birth: false }, // three live neighbors
-            { death: true, birth: false }, // four live neighbors
-            { death: true, birth: false }, // five live neighbors
-            { death: true, birth: false }, // six live neighbors
-        ];
+        this.rules = new Rules();
         // for (var i = 0; i < geometry.totalNumberOfCells; i++) {
         //     var bringToLife = Math.random() > 0.3;
         //     this.cells.push(new Cell(i, bringToLife, geometry));
