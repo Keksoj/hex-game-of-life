@@ -19,7 +19,10 @@ var ctx = canvas.getContext('2d');
 var pauseButton = document.getElementById('pause');
 pauseButton.isToggled = false;
 
-var board = new Board(geometry, 300, ctx);
+var death_to_0 = document.getElementById('0_death');
+death_to_0.isToggled = false;
+
+var board = new Board(geometry, 900, ctx);
 // console.log(board);
 // board.draw(ctx, geometry);
 board.play();

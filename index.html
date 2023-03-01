@@ -36,6 +36,7 @@
                 background-color: #222;
             }
             body {
+                margin: 0;
                 background-color: #111;
             }
             canvas {
@@ -44,13 +45,20 @@
                 display: block;
                 background-color: #555;
             }
+            #controls {
+                color: white;
+                background-color: #444;
+                padding: 5px;
+            }
         </style>
     </head>
     <body>
-        <!-- <a href="https://emmanuelbosquet.com">Retour au CV</a> -->
+        <!-- <a href="https://emmanuelbosquet.com">Retour  au CV</a> -->
         <canvas id="canvas"></canvas>
         <div id="controls">
             <input type="button" id="pause" value="start/stop" />
+            <input type="radio" id="0_death" onclick="board.pause();"/>
+            <label for="0_death">0 neigbour - kill</label>
             <form></form>
         </div>
         <script type="module" src="src/main.js"></script>

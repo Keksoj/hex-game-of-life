@@ -30,11 +30,11 @@ export default class Board {
 
         this.rules = [
             new Rule(0, true, false), // zero live neighbor
-            new Rule(1, false, false), // one live neighbor
+            new Rule(1, true, false), // one live neighbor
             new Rule(2, false, true), // two live neighbors
-            new Rule(3, false, false), // three live neighbors
-            new Rule(4, false, false), // four live neighbors
-            new Rule(5, true, true), // five live neighbors
+            new Rule(3, true, true), // three live neighbors
+            new Rule(4, true, false), // four live neighbors
+            new Rule(5, true, false), // five live neighbors
             new Rule(6, true, false), // six live neighbors
         ];
         // for (var i = 0; i < geometry.totalNumberOfCells; i++) {
@@ -83,6 +83,14 @@ export default class Board {
         for (var index = 0; index < this.geometry.totalNumberOfCells; index++) {
             this.cells[index].updateLiveState(this.rules);
         }
+    }
+
+    /**
+     * Apply a rule to the ongoing game
+     * @param {Rule} rule
+     */
+    applyRule(rule) {
+        this.rules[rule.liveNeighbors] = rule;
     }
 
     /** draw the game
